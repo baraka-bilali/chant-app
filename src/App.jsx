@@ -120,7 +120,7 @@ export default function App(){
               <SongList songs={filteredSongs} onSelectSong={handleSongSelect} />
             </div>
           ) : (
-            <div className="surface p-16">
+            <div className="surface p-16" style={{ maxHeight: 'calc(100vh - 200px)', overflow: 'auto' }}>
               <div style={{ marginBottom: '20px' }}>
                 <button 
                   onClick={handleBackToList}
