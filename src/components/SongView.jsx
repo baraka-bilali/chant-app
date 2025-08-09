@@ -1,35 +1,63 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-export default function SongView({ song, onAddToPlaylist }) {
+export default function SongView({ song, onAddToPlaylist, playlists = {} }) {
   const containerRef = useRef()
-
-  useEffect(() => {
-    if (song && containerRef.current) {
-      containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
-  }, [song])
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   if (!song) {
-    return <div style={{ background: '#fff', padding: 12, borderRadius: 6 }}>Clique un titre pour voir les paroles.</div>
+    return <div>Clique un titre pour voir les paroles.</div>
   }
 
   return (
-    <div ref={containerRef} style={{ background: '#fff', padding: 16, borderRadius: 6, boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
+    <div ref={containerRef}>
       <h2 style={{ marginTop: 0 }}>{song.Title}</h2>
-      <div style={{ marginBottom: 12 }}>
+      <div className="mb-12" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <button
-          onClick={() => {
-            const name = prompt('Nom de la playlist (ex: Mes chants)')
-            if (name) onAddToPlaylist(name.trim(), song.Title)
-          }}
-          style={{ padding: '8px 12px', borderRadius: 6, border: 'none', background: '#2563eb', color: '#fff' }}
+          className="btn-cta"
+          onClick={() => setPickerOpen(v => !v)}
+          aria-expanded={pickerOpen}
         >
-          Ajouter à une playlist
+          Ajouter à une playlist +
         </button>
       </div>
+      {pickerOpen && (
+        <PlaylistPicker onPick={(name) => { onAddToPlaylist(name, song.Title); setPickerOpen(false) }} existing={Object.keys(playlists)} />
+      )}
 
-      <div style={{ lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+      <div style={{ lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
         {song.Lyrics}
+      </div>
+    </div>
+  )
+}
+
+function PlaylistPicker({ onPick, existing = [] }) {
+  const selectRef = useRef(null)
+  const inputRef = useRef(null)
+
+  return (
+    <div className="mb-12" style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+      <div className="surface" style={{ padding: 6, borderRadius: 10, display: 'flex', gap: 6, alignItems: 'center' }}>
+        <select ref={selectRef} style={{ padding: '6px 8px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}>
+          <option value="">Choisir playlist…</option>
+          {existing.map(name => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+        </select>
+        <span className="muted-text" style={{ fontSize: 12 }}>ou</span>
+        <input ref={inputRef} placeholder="Créer nouvelle" style={{ padding: '6px 8px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }} />
+        <button
+          className="btn-ghost"
+          style={{ background: 'linear-gradient(180deg, #22c55e, #16a34a 70%, #15803d)', color: '#0b0c0f', borderColor: 'transparent' }}
+          onClick={() => {
+            const chosen = selectRef.current?.value?.trim()
+            const created = inputRef.current?.value?.trim()
+            const finalName = created || chosen
+            if (finalName) onPick(finalName)
+          }}
+        >
+          Ajouter +
+        </button>
       </div>
     </div>
   )
