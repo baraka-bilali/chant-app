@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 
-import { ThemeToggle } from '@/components/theme-toggle';
+import { HeaderActions } from '@/components/header-actions';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function TabLayout() {
@@ -12,7 +12,7 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: theme.accent,
         tabBarInactiveTintColor: theme.muted,
-        headerRight: () => <ThemeToggle />,
+        headerRight: () => <HeaderActions />,
       }}>
       <Tabs.Screen
         name="index"

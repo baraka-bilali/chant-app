@@ -38,8 +38,9 @@ function Navigator() {
       <StatusBar style={isLight ? 'dark' : 'light'} />
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="song/[id]" options={{ title: 'Chant', headerBackTitle: 'Retour' }} />
+        <Stack.Screen name="song/[id]" options={{ title: '', headerBackTitle: 'Retour' }} />
         <Stack.Screen name="playlist/[id]" options={{ title: 'Playlist', headerBackTitle: 'Retour' }} />
+        <Stack.Screen name="info" options={{ title: 'À propos', headerBackTitle: 'Retour' }} />
       </Stack>
     </ThemeProvider>
   );

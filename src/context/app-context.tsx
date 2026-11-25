@@ -22,10 +22,20 @@ type AppContextValue = {
   addSong: (playlistId: string, songId: string) => void;
   removeSong: (playlistId: string, songId: string) => void;
   toggleTheme: () => void;
+  /** Lyrics font size in points, adjustable by the user and persisted. */
+  fontSize: number;
+  increaseFont: () => void;
+  decreaseFont: () => void;
 };
+
+export const FONT_MIN = 14;
+export const FONT_MAX = 34;
+const FONT_STEP = 2;
+const FONT_DEFAULT = 18;
 
 const PLAYLISTS_KEY = 'chant_playlists_v2';
 const THEME_KEY = 'theme_pref';
+const FONT_KEY = 'font_size';
 
 const AppContext = createContext<AppContextValue | null>(null);
 
@@ -43,6 +53,7 @@ const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2
 export function AppProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [fontSize, setFontSize] = useState(FONT_DEFAULT);
   // Source of truth for synchronous reads inside actions; state mirrors it for rendering.
   const playlistsRef = useRef<Playlist[]>([]);
   const scheme = useColorScheme();
@@ -57,13 +68,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     (async () => {
       try {
-        const [storedPlaylists, storedTheme] = await Promise.all([
+        const [storedPlaylists, storedTheme, storedFont] = await Promise.all([
           AsyncStorage.getItem(PLAYLISTS_KEY),
           AsyncStorage.getItem(THEME_KEY),
+          AsyncStorage.getItem(FONT_KEY),
         ]);
         if (cancelled) return;
         if (storedPlaylists) update(() => sanitizePlaylists(JSON.parse(storedPlaylists)));
         if (storedTheme === 'light' || storedTheme === 'dark') Appearance.setColorScheme(storedTheme);
+        const font = Number(storedFont);
+        if (storedFont && font >= FONT_MIN && font <= FONT_MAX) setFontSize(font);
       } catch {
         // Corrupted or unavailable storage: start with an empty state.
       } finally {
@@ -122,9 +136,31 @@ export function AppProvider({ children }: { children: ReactNode }) {
     AsyncStorage.setItem(THEME_KEY, next).catch(() => {});
   }, [scheme]);
 
+  useEffect(() => {
+    if (!ready) return;
+    AsyncStorage.setItem(FONT_KEY, String(fontSize)).catch(() => {});
+  }, [fontSize, ready]);
+
+  const changeFont = useCallback((delta: number) => {
+    setFontSize((current) => Math.min(FONT_MAX, Math.max(FONT_MIN, current + delta)));
+  }, []);
+  const increaseFont = useCallback(() => changeFont(FONT_STEP), [changeFont]);
+  const decreaseFont = useCallback(() => changeFont(-FONT_STEP), [changeFont]);
+
   const value = useMemo(
-    () => ({ ready, playlists, createPlaylist, deletePlaylist, addSong, removeSong, toggleTheme }),
-    [ready, playlists, createPlaylist, deletePlaylist, addSong, removeSong, toggleTheme],
+    () => ({
+      ready,
+      playlists,
+      createPlaylist,
+      deletePlaylist,
+      addSong,
+      removeSong,
+      toggleTheme,
+      fontSize,
+      increaseFont,
+      decreaseFont,
+    }),
+    [ready, playlists, createPlaylist, deletePlaylist, addSong, removeSong, toggleTheme, fontSize, increaseFont, decreaseFont],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
