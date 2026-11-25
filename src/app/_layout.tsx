@@ -10,7 +10,7 @@ import { useTheme } from '@/hooks/use-theme';
 SplashScreen.preventAutoHideAsync();
 
 function Navigator() {
-  const { ready } = useApp();
+  const { ready, onboardingDone } = useApp();
   const theme = useTheme();
   const isLight = useColorScheme() === 'light';
 
@@ -37,10 +37,16 @@ function Navigator() {
     <ThemeProvider value={navigationTheme}>
       <StatusBar style={isLight ? 'dark' : 'light'} />
       <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="song/[id]" options={{ title: '', headerBackTitle: 'Retour' }} />
-        <Stack.Screen name="playlist/[id]" options={{ title: 'Playlist', headerBackTitle: 'Retour' }} />
-        <Stack.Screen name="info" options={{ title: 'À propos', headerBackTitle: 'Retour' }} />
+        {/* First launch: only the welcome screens are reachable until they are completed or skipped. */}
+        <Stack.Protected guard={!onboardingDone} redirectTo="/">
+          <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
+        </Stack.Protected>
+        <Stack.Protected guard={onboardingDone} redirectTo="/onboarding">
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="song/[id]" options={{ title: '', headerBackTitle: 'Retour' }} />
+          <Stack.Screen name="playlist/[id]" options={{ title: 'Playlist', headerBackTitle: 'Retour' }} />
+          <Stack.Screen name="info" options={{ title: 'À propos', headerBackTitle: 'Retour' }} />
+        </Stack.Protected>
       </Stack>
     </ThemeProvider>
   );

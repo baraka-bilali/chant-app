@@ -14,9 +14,8 @@
     "android": {
       "package": "org.cmipascal.recueil",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#1d4ed8",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
@@ -30,12 +29,27 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0b0c0f",
+          "backgroundColor": "#ffffff",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 220,
+          "dark": {
+            "backgroundColor": "#1d4ed8",
+            "image": "./assets/images/splash-icon-dark.png"
+          }
         }
       ],
-      "expo-font"
+      "expo-font",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "buildArchs": ["armeabi-v7a", "arm64-v8a"],
+            "useLegacyPackaging": true,
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
+          }
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -26,6 +26,10 @@ type AppContextValue = {
   fontSize: number;
   increaseFont: () => void;
   decreaseFont: () => void;
+  /** False until the user has finished (or skipped) the welcome screens once. */
+  onboardingDone: boolean;
+  completeOnboarding: () => void;
+  replayOnboarding: () => void;
 };
 
 export const FONT_MIN = 14;
@@ -36,6 +40,7 @@ const FONT_DEFAULT = 18;
 const PLAYLISTS_KEY = 'chant_playlists_v2';
 const THEME_KEY = 'theme_pref';
 const FONT_KEY = 'font_size';
+const ONBOARDING_KEY = 'onboarding_done';
 
 const AppContext = createContext<AppContextValue | null>(null);
 
@@ -54,6 +59,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [fontSize, setFontSize] = useState(FONT_DEFAULT);
+  const [onboardingDone, setOnboardingDone] = useState(false);
   // Source of truth for synchronous reads inside actions; state mirrors it for rendering.
   const playlistsRef = useRef<Playlist[]>([]);
   const scheme = useColorScheme();
@@ -68,12 +74,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     (async () => {
       try {
-        const [storedPlaylists, storedTheme, storedFont] = await Promise.all([
+        const [storedPlaylists, storedTheme, storedFont, storedOnboarding] = await Promise.all([
           AsyncStorage.getItem(PLAYLISTS_KEY),
           AsyncStorage.getItem(THEME_KEY),
           AsyncStorage.getItem(FONT_KEY),
+          AsyncStorage.getItem(ONBOARDING_KEY),
         ]);
         if (cancelled) return;
+        setOnboardingDone(storedOnboarding === '1');
         if (storedPlaylists) update(() => sanitizePlaylists(JSON.parse(storedPlaylists)));
         if (storedTheme === 'light' || storedTheme === 'dark') Appearance.setColorScheme(storedTheme);
         const font = Number(storedFont);
@@ -147,6 +155,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const increaseFont = useCallback(() => changeFont(FONT_STEP), [changeFont]);
   const decreaseFont = useCallback(() => changeFont(-FONT_STEP), [changeFont]);
 
+  const completeOnboarding = useCallback(() => {
+    setOnboardingDone(true);
+    AsyncStorage.setItem(ONBOARDING_KEY, '1').catch(() => {});
+  }, []);
+  const replayOnboarding = useCallback(() => {
+    setOnboardingDone(false);
+    AsyncStorage.removeItem(ONBOARDING_KEY).catch(() => {});
+  }, []);
+
   const value = useMemo(
     () => ({
       ready,
@@ -159,8 +176,25 @@ export function AppProvider({ children }: { children: ReactNode }) {
       fontSize,
       increaseFont,
       decreaseFont,
+      onboardingDone,
+      completeOnboarding,
+      replayOnboarding,
     }),
-    [ready, playlists, createPlaylist, deletePlaylist, addSong, removeSong, toggleTheme, fontSize, increaseFont, decreaseFont],
+    [
+      ready,
+      playlists,
+      createPlaylist,
+      deletePlaylist,
+      addSong,
+      removeSong,
+      toggleTheme,
+      fontSize,
+      increaseFont,
+      decreaseFont,
+      onboardingDone,
+      completeOnboarding,
+      replayOnboarding,
+    ],
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
