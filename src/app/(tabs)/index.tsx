@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useCallback, useDeferredValue, useMemo, useState } from 'react';
-import { FlatList, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useCallback, useDeferredValue, useMemo, useRef, useState, type ComponentRef } from 'react';
+import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { SongRow } from '@/components/song-row';
 import { Spacing } from '@/constants/theme';
@@ -12,6 +12,7 @@ export default function SongsScreen() {
   const theme = useTheme();
   const router = useRouter();
   const [query, setQuery] = useState('');
+  const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
   const deferredQuery = useDeferredValue(query);
   const results = useMemo(() => searchSongs(deferredQuery), [deferredQuery]);
 
@@ -29,6 +30,7 @@ export default function SongsScreen() {
       <View style={[styles.search, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Ionicons name="search" size={20} color={theme.muted} />
         <TextInput
+          ref={inputRef}
           value={query}
           onChangeText={setQuery}
           placeholder="Titre, numéro ou paroles"
@@ -36,9 +38,20 @@ export default function SongsScreen() {
           autoCapitalize="none"
           autoCorrect={false}
           returnKeyType="search"
-          clearButtonMode="while-editing"
           style={[styles.input, { color: theme.text }]}
         />
+        {query.length > 0 && (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Effacer la recherche"
+            hitSlop={10}
+            onPress={() => {
+              setQuery('');
+              inputRef.current?.focus();
+            }}>
+            <Ionicons name="close-circle" size={22} color={theme.muted} />
+          </Pressable>
+        )}
       </View>
       <Text style={[styles.count, { color: theme.muted }]}>
         {results.length} chant{results.length > 1 ? 's' : ''}
