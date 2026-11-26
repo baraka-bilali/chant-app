@@ -235,7 +235,7 @@ p { margin: 0; }
 
 /* ---------- Family / offline ---------- */
 .family, .offline { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
-.family-art img, .offline-art img { width: 100%; border-radius: 36px; box-shadow: var(--shadow); }
+.family-art img, .offline-art img { width: 100%; height: auto; aspect-ratio: 360 / 260; object-fit: cover; border-radius: 36px; box-shadow: var(--shadow); }
 .family-copy h2, .offline-copy h2 { font-size: clamp(2rem, 4vw, 3rem); }
 .family-copy > p, .offline-copy > p { margin-top: 20px; color: var(--muted); font-size: 1.1rem; }
 .langs { list-style: none; padding: 0; margin: 28px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
