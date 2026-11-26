@@ -44,10 +44,27 @@ npm run convert -- "C:/Users/Public/Documents/VideoPsalm/SongBooks/A-S.json" src
 ```
 Chaque refrain n'est conservé qu'une fois, après le premier couplet. Ajoute `full` en 3e argument pour le rapport complet.
 
-## Publier sur Android et iOS
-Pour installer l'app hors Expo Go (APK / App Store / Play Store), utilise Expo Build :
+## Android : créer l'APK
 ```bash
-npx eas-cli@latest build --platform android
+npx eas-cli@latest build --platform android --profile preview
 ```
-Avant la première publication, ajoute `ios.bundleIdentifier` et `android.package` dans `app.json`,
-et remplace les icônes dans `assets/images/` (ce sont pour l'instant les icônes par défaut d'Expo).
+Le build se fait sur les serveurs d'Expo. Les identifiants d'application (`org.cmipascal.recueil`) et les icônes sont déjà configurés dans `app.json`.
+
+## Version web pour iPhone (PWA sur Vercel)
+La version web est la même app, exportée en site statique, installable sur l'écran d'accueil et lisible **sans internet**
+(un service worker met toute l'app en cache après la première visite).
+
+```bash
+npm run build:web      # exporte dans dist/ puis génère dist/sw.js
+```
+
+**Déployer sur Vercel** (une seule fois) :
+1. Sur vercel.com : *Add New… → Project*, importer le dépôt GitHub `chant-app`.
+2. Laisser les réglages par défaut : `vercel.json` fournit la commande de build (`npm run build:web`), le dossier de sortie (`dist`) et la redirection des liens directs.
+3. *Deploy*. Chaque `git push` sur `main` met ensuite le site à jour.
+
+**Installer sur iPhone** : ouvrir le lien dans **Safari** → bouton Partager → *Sur l'écran d'accueil*.
+(Une bannière dans l'app explique ces étapes aux utilisateurs iPhone.)
+
+Fichiers concernés : `public/index.html` (balises iOS, enregistrement du service worker), `public/manifest.json`,
+icônes `public/logo*.png`, `scripts/build-sw.js` (génère le service worker), `vercel.json`.

@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { useCallback, useDeferredValue, useMemo, useRef, useState, type ComponentRef } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { InstallHint } from '@/components/install-hint';
 import { SongRow } from '@/components/song-row';
 import { Spacing } from '@/constants/theme';
 import { searchSongs, type Song } from '@/data/songs';
@@ -27,6 +28,7 @@ export default function SongsScreen() {
 
   return (
     <View style={styles.container}>
+      <InstallHint />
       <View style={[styles.search, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Ionicons name="search" size={20} color={theme.muted} />
         <TextInput
