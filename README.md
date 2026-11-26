@@ -50,6 +50,24 @@ npx eas-cli@latest build --platform android --profile preview
 ```
 Le build se fait sur les serveurs d'Expo. Les identifiants d'application (`org.cmipascal.recueil`) et les icônes sont déjà configurés dans `app.json`.
 
+## Site de téléchargement (`site/`)
+Un petit site statique (HTML/CSS/JS, sans build) présente l'application et permet de la télécharger :
+bouton **APK Android**, lien vers la **version web (PWA)**, **deux QR codes** (APK et web) et un explorateur de fonctionnalités.
+
+- `site/index.html`, `site/css/styles.css`, `site/js/main.js` : le site. Les liens (adresse de la PWA, WhatsApp, e-mail, version, taille de l'APK) sont réglés en haut de `site/js/main.js` (`CONFIG`).
+- `site/downloads/recueil-cmi.apk` : le fichier APK proposé au téléchargement.
+- `site/images/shots/` : captures d'écran de l'app utilisées sur le site.
+- `site/js/qrcode.js` : générateur de QR codes (MIT), les codes sont créés dans le navigateur.
+
+**Tester en local** : `npx serve site` puis ouvrir l'adresse affichée.
+
+**Déployer sur Vercel** (un second projet, distinct de la PWA) :
+1. *Add New… → Project*, importer le même dépôt `chant-app`.
+2. Dans *Root Directory*, choisir **`site`** (Framework Preset : *Other*, aucune commande de build).
+3. *Deploy*. Le QR code de l'APK pointe automatiquement vers l'adresse du site.
+
+**Mettre à jour l'APK** : après un nouveau build (`eas build`), télécharger le nouvel APK depuis la page du build Expo, le remplacer dans `site/downloads/recueil-cmi.apk`, mettre à jour `version` et `apkSize` dans `CONFIG`, puis `git push`.
+
 ## Version web pour iPhone (PWA sur Vercel)
 La version web est la même app, exportée en site statique, installable sur l'écran d'accueil et lisible **sans internet**
 (un service worker met toute l'app en cache après la première visite).
