@@ -37,6 +37,14 @@ src/
 └─ lib/                 utilitaires (analyse des paroles, normalisation du texte)
 ```
 
+## Recueils (collections)
+Après l'introduction, l'écran d'accueil affiche les recueils sous forme de couvertures :
+**Chants d'ensemble** (854 chants) et **Recueil Chorale Tome 1** (« Bientôt disponible »).
+Ils sont définis dans `src/data/collections.ts` (titre, couleurs de la couverture, chants). Pour remplir le
+« Recueil Chorale Tome 1 » : convertir son fichier VideoPsalm (voir ci-dessous), l'importer comme `ensembleSongs` dans
+`src/data/songs.ts`, puis mettre `songs` et `comingSoon: false` dans `collections.ts`.
+Les playlists fonctionnent sur tous les recueils.
+
 ## Mettre à jour le recueil depuis VideoPsalm
 Les chants viennent de `A-S.json` (VideoPsalm). Pour régénérer `src/data/A-S.json` après une modification :
 ```bash
@@ -67,6 +75,35 @@ bouton **APK Android**, lien vers la **version web (PWA)**, **deux QR codes** (A
 3. *Deploy*. Le QR code de l'APK pointe automatiquement vers l'adresse du site.
 
 **Mettre à jour l'APK** : après un nouveau build (`eas build`), télécharger le nouvel APK depuis la page du build Expo, le remplacer dans `site/downloads/recueil-cmi.apk`, mettre à jour `version` et `apkSize` dans `CONFIG`, puis `git push`.
+
+## Vidéo de présentation (`video/`)
+Vidéo motion design (~1 min 20, 4K, voix off en français) réalisée avec [Remotion](https://www.remotion.dev) : présentation de l'app,
+installation sur iPhone pas à pas, Android, et contact en cas de souci.
+
+**Voix off naturelle (ElevenLabs ou OpenAI)** : le texte est dans `video/voice/script.json`. Avec votre propre clé d'API :
+```powershell
+cd video
+$env:ELEVENLABS_API_KEY = "votre-clé"; $env:ELEVENLABS_VOICE_ID = "id-d-une-voix-française"; node voice/tts.mjs elevenlabs
+$env:OPENAI_API_KEY = "votre-clé"; node voice/tts.mjs openai
+```
+Les MP3 (voix complète + une phrase par fichier) et `placement.txt` (où placer chaque phrase dans CapCut) arrivent dans `video/out/voix-off/`.
+
+Une voix Windows de secours (« Microsoft Julie ») peut aussi être générée (« Microsoft Julie ») à partir de `video/voice/lines.json`.
+Pour changer le texte ou la voix (« Microsoft Paul », « Microsoft Hortense »), modifier ce fichier puis relancer
+les deux commandes de voix ci-dessous. Pour une voix enregistrée par une personne, remplacer simplement les fichiers
+`video/public/voice/*.wav` (mêmes noms) puis relancer `node voice/measure.js`.
+
+```bash
+cd video
+npm install
+npm run music     # génère la musique de fond (public/music.wav)
+powershell -ExecutionPolicy Bypass -File voice/make-voice.ps1 -Voice "Microsoft Julie"   # voix off
+node voice/measure.js                                                                   # calage de la voix
+npm run studio    # aperçu et retouches dans le navigateur
+npm run render    # rend out/recueil-cmi-4k.mp4 (3840×2160)
+npm run render:hd # version 1080p plus légère pour WhatsApp
+```
+Les textes (adresse web, téléphone, e-mail, adresse du site de téléchargement) se modifient dans `video/src/theme.ts` (`INFO`).
 
 ## Version web pour iPhone (PWA sur Vercel)
 La version web est la même app, exportée en site statique, installable sur l'écran d'accueil et lisible **sans internet**

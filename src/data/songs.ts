@@ -17,7 +17,8 @@ export type Song = {
   search: string;
 };
 
-export const songs: Song[] = raw.Songs.map((s) => ({
+/** Songs of the "Chants d'ensemble" collection (generated from VideoPsalm, see scripts/). */
+export const ensembleSongs: Song[] = raw.Songs.map((s) => ({
   // Guid is base64 ("+" and "/" are unsafe in URLs): convert to base64url.
   id: s.Guid.replace(/\+/g, '-').replace(/\//g, '_'),
   number: s.Number,
@@ -28,13 +29,12 @@ export const songs: Song[] = raw.Songs.map((s) => ({
   search: normalizeText(`${s.Title} ${s.Lyrics}`),
 }));
 
-export const songsById = new Map(songs.map((s) => [s.id, s]));
-
-export function searchSongs(query: string): Song[] {
+/** Filters a list of songs by number (digits only) or by title and lyrics (accent-insensitive). */
+export function searchSongs(query: string, list: Song[]): Song[] {
   const q = query.trim();
-  if (!q) return songs;
+  if (!q) return list;
   // Typing a number jumps to that song number instead of matching "1." in every lyrics.
-  if (/^\d+$/.test(q)) return songs.filter((s) => String(s.number).startsWith(q));
+  if (/^\d+$/.test(q)) return list.filter((s) => String(s.number).startsWith(q));
   const needle = normalizeText(q);
-  return songs.filter((s) => s.search.includes(needle));
+  return list.filter((s) => s.search.includes(needle));
 }

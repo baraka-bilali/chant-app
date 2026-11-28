@@ -17,9 +17,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Chants',
+          title: 'Recueils',
           tabBarIcon: ({ focused, size }) => (
-            <Ionicons name="musical-notes" size={size} color={focused ? theme.accent : theme.muted} />
+            <Ionicons name="library" size={size} color={focused ? theme.accent : theme.muted} />
           ),
         }}
       />

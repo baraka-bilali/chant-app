@@ -5,7 +5,8 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { SongRow } from '@/components/song-row';
 import { Spacing } from '@/constants/theme';
-import { songsById, type Song } from '@/data/songs';
+import { songsById } from '@/data/collections';
+import type { Song } from '@/data/songs';
 import { useApp } from '@/context/app-context';
 import { useTheme } from '@/hooks/use-theme';
 import { confirmAction } from '@/lib/confirm';

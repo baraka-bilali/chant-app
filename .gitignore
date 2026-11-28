@@ -44,3 +44,8 @@ example
 
 # local env
 .env
+
+# presentation video (rendered files and generated music)
+video/out/
+video/public/music.wav
+video/public/voice/

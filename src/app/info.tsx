@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ContactButtons } from '@/components/contact-buttons';
 import { Spacing } from '@/constants/theme';
 import { useApp } from '@/context/app-context';
-import { songs } from '@/data/songs';
+import { allSongs } from '@/data/collections';
 import { useTheme } from '@/hooks/use-theme';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '—';
@@ -25,7 +25,7 @@ export default function InfoScreen() {
 
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Row label="Version" value={APP_VERSION} />
-        <Row label="Chants" value={String(songs.length)} last />
+        <Row label="Chants" value={String(allSongs.length)} last />
       </View>
 
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>

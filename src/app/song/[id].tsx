@@ -8,7 +8,7 @@ import { FontSizeControls } from '@/components/font-size-controls';
 import { LyricsView } from '@/components/lyrics-view';
 import { PlaylistPicker } from '@/components/playlist-picker';
 import { Spacing } from '@/constants/theme';
-import { songsById } from '@/data/songs';
+import { songsById } from '@/data/collections';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function SongScreen() {

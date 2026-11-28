@@ -19,7 +19,7 @@ import { ContactButtons } from '@/components/contact-buttons';
 import { FAMILY_SVG, OFFLINE_SVG } from '@/constants/illustrations';
 import { Spacing } from '@/constants/theme';
 import { useApp } from '@/context/app-context';
-import { songs } from '@/data/songs';
+import { allSongs } from '@/data/collections';
 import { useTheme } from '@/hooks/use-theme';
 
 const LANGUAGES = ['Français', 'English', 'Kiswahili', 'Lingala', 'Tshiluba', 'Kikongo'];
@@ -78,7 +78,7 @@ export default function OnboardingScreen() {
     },
     {
       key: 'languages',
-      kicker: `${songs.length} chants`,
+      kicker: `${allSongs.length} chants`,
       title: 'Un recueil, plusieurs langues',
       body: 'Chantez dans la langue de votre cœur : le recueil rassemble des cantiques de toutes nos assemblées.',
       art: badge('globe-outline'),
