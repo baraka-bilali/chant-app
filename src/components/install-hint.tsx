@@ -5,6 +5,7 @@ import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 
 const DISMISSED_KEY = 'install_hint_dismissed';
 
@@ -22,6 +23,7 @@ function shouldShow(): boolean {
 /** Explains how to install the web app on an iPhone (Safari has no install button). */
 export function InstallHint() {
   const theme = useTheme();
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -42,13 +44,14 @@ export function InstallHint() {
     <View style={[styles.card, { backgroundColor: theme.chorusBackground, borderColor: theme.accent }]}>
       <Ionicons name="phone-portrait-outline" size={26} color={theme.accent} />
       <View style={styles.texts}>
-        <Text style={[styles.title, { color: theme.text }]}>Installer sur votre iPhone</Text>
+        <Text style={[styles.title, { color: theme.text }]}>{t('install.title')}</Text>
         <Text style={[styles.body, { color: theme.muted }]}>
-          Touchez <Ionicons name="share-outline" size={14} color={theme.accent} /> Partager puis « Sur l’écran
-          d’accueil ». L’app s’ouvrira en plein écran, même sans internet.
+          {t('install.text').split('{icon}')[0]}
+          <Ionicons name="share-outline" size={14} color={theme.accent} />
+          {t('install.text').split('{icon}')[1]}
         </Text>
       </View>
-      <Pressable accessibilityRole="button" accessibilityLabel="Fermer" hitSlop={10} onPress={dismiss}>
+      <Pressable accessibilityRole="button" accessibilityLabel={t('common.close')} hitSlop={10} onPress={dismiss}>
         <Ionicons name="close" size={22} color={theme.muted} />
       </Pressable>
     </View>

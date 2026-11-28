@@ -6,11 +6,13 @@ import { FlatList, Pressable, StyleSheet, Text, TextInput, View } from 'react-na
 import { Spacing } from '@/constants/theme';
 import { useApp } from '@/context/app-context';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 import { confirmAction } from '@/lib/confirm';
 
 export default function PlaylistsScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t, plural } = useI18n();
   const { playlists, createPlaylist, deletePlaylist } = useApp();
   const [name, setName] = useState('');
 
@@ -24,7 +26,7 @@ export default function PlaylistsScreen() {
         <TextInput
           value={name}
           onChangeText={setName}
-          placeholder="Nom de la playlist"
+          placeholder={t('playlists.name')}
           placeholderTextColor={theme.muted}
           onSubmitEditing={create}
           returnKeyType="done"
@@ -35,7 +37,7 @@ export default function PlaylistsScreen() {
           onPress={create}
           disabled={!name.trim()}
           style={[styles.button, { backgroundColor: theme.accent, opacity: name.trim() ? 1 : 0.4 }]}>
-          <Text style={[styles.buttonText, { color: theme.onAccent }]}>Créer</Text>
+          <Text style={[styles.buttonText, { color: theme.onAccent }]}>{t('common.create')}</Text>
         </Pressable>
       </View>
 
@@ -44,7 +46,7 @@ export default function PlaylistsScreen() {
         keyExtractor={(p) => p.id}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={styles.list}
-        ListEmptyComponent={<Text style={[styles.empty, { color: theme.muted }]}>Aucune playlist</Text>}
+        ListEmptyComponent={<Text style={[styles.empty, { color: theme.muted }]}>{t('playlists.none')}</Text>}
         renderItem={({ item }) => (
           <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
             <Pressable
@@ -56,18 +58,22 @@ export default function PlaylistsScreen() {
                   {item.name}
                 </Text>
                 <Text style={[styles.cardSub, { color: theme.muted }]}>
-                  {item.songIds.length} chant{item.songIds.length > 1 ? 's' : ''}
+                  {plural('playlists.songs', item.songIds.length)}
                 </Text>
               </View>
               <Ionicons name="chevron-forward" size={20} color={theme.muted} />
             </Pressable>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel={`Supprimer la playlist ${item.name}`}
+              accessibilityLabel={t('playlists.deleteA11y', { name: item.name })}
               hitSlop={8}
               onPress={() =>
-                confirmAction('Supprimer la playlist', `Supprimer « ${item.name} » ?`, 'Supprimer', () =>
-                  deletePlaylist(item.id),
+                confirmAction(
+                  t('playlists.deleteTitle'),
+                  t('playlists.deleteText', { name: item.name }),
+                  t('common.delete'),
+                  t('common.cancel'),
+                  () => deletePlaylist(item.id),
                 )
               }
               style={styles.delete}>

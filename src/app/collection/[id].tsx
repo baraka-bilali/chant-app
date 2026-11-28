@@ -9,18 +9,25 @@ import { SongRow } from '@/components/song-row';
 import { Spacing } from '@/constants/theme';
 import { getCollection } from '@/data/collections';
 import { searchSongs, type Song } from '@/data/songs';
+import { HeaderActions } from '@/components/header-actions';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
+
+const NO_SONGS: Song[] = [];
 
 export default function CollectionScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const collection = getCollection(id);
   const theme = useTheme();
   const router = useRouter();
+  const { t, plural } = useI18n();
   const [query, setQuery] = useState('');
   const inputRef = useRef<ComponentRef<typeof TextInput>>(null);
   const deferredQuery = useDeferredValue(query);
-  const songs = collection?.songs;
-  const results = useMemo(() => searchSongs(deferredQuery, songs ?? []), [deferredQuery, songs]);
+  const results = useMemo(
+    () => searchSongs(deferredQuery, getCollection(id)?.songs ?? NO_SONGS),
+    [deferredQuery, id],
+  );
 
   const openSong = useCallback(
     (songId: string) => router.push({ pathname: '/song/[id]', params: { id: songId } }),
@@ -34,7 +41,7 @@ export default function CollectionScreen() {
   if (!collection) {
     return (
       <View style={styles.center}>
-        <Text style={{ color: theme.muted }}>Recueil introuvable.</Text>
+        <Text style={{ color: theme.muted }}>{t('collections.notFound')}</Text>
       </View>
     );
   }
@@ -42,14 +49,14 @@ export default function CollectionScreen() {
   if (collection.comingSoon) {
     return (
       <>
-        <Stack.Screen options={{ title: collection.title }} />
+        <Stack.Screen options={{ title: collection.title, headerRight: () => <HeaderActions /> }} />
         <View style={styles.soon}>
           <View style={[styles.soonIcon, { backgroundColor: theme.chorusBackground }]}>
             <Ionicons name="musical-notes" size={44} color={theme.accent} />
           </View>
-          <Text style={[styles.soonTitle, { color: theme.text }]}>Bientôt disponible</Text>
+          <Text style={[styles.soonTitle, { color: theme.text }]}>{t('collections.soon')}</Text>
           <Text style={[styles.soonText, { color: theme.muted }]}>
-            Les chants du « {collection.title} » seront ajoutés prochainement. Une question ou une suggestion ?
+            {t('collections.soonText', { title: collection.title })}
           </Text>
           <ContactButtons />
         </View>
@@ -59,7 +66,7 @@ export default function CollectionScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: collection.title }} />
+      <Stack.Screen options={{ title: collection.title, headerRight: () => <HeaderActions /> }} />
       <InstallHint />
       <View style={[styles.search, { backgroundColor: theme.surface, borderColor: theme.border }]}>
         <Ionicons name="search" size={20} color={theme.muted} />
@@ -67,7 +74,7 @@ export default function CollectionScreen() {
           ref={inputRef}
           value={query}
           onChangeText={setQuery}
-          placeholder="Titre, numéro ou paroles"
+          placeholder={t('search.placeholder')}
           placeholderTextColor={theme.muted}
           autoCapitalize="none"
           autoCorrect={false}
@@ -77,7 +84,7 @@ export default function CollectionScreen() {
         {query.length > 0 && (
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Effacer la recherche"
+            accessibilityLabel={t('search.clear')}
             hitSlop={10}
             onPress={() => {
               setQuery('');
@@ -88,7 +95,7 @@ export default function CollectionScreen() {
         )}
       </View>
       <Text style={[styles.count, { color: theme.muted }]}>
-        {results.length} chant{results.length > 1 ? 's' : ''}
+        {plural('collections.songs', results.length)}
       </Text>
       <FlatList
         data={results}
@@ -99,7 +106,7 @@ export default function CollectionScreen() {
         initialNumToRender={20}
         windowSize={9}
         ListEmptyComponent={
-          <Text style={[styles.empty, { color: theme.muted }]}>Aucun résultat. Modifie ta recherche.</Text>
+          <Text style={[styles.empty, { color: theme.muted }]}>{t('search.empty')}</Text>
         }
       />
     </View>

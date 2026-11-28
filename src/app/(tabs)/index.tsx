@@ -6,6 +6,7 @@ import { CollectionCover } from '@/components/collection-cover';
 import { Spacing } from '@/constants/theme';
 import { collections } from '@/data/collections';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 
 const GAP = Spacing.four;
 const PADDING = Spacing.three + 4;
@@ -14,6 +15,7 @@ const PADDING = Spacing.three + 4;
 export default function CollectionsScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { t, plural } = useI18n();
   const { width } = useWindowDimensions();
 
   const columns = width >= 900 ? 4 : width >= 640 ? 3 : 2;
@@ -27,13 +29,13 @@ export default function CollectionsScreen() {
 
   return (
     <ScrollView contentContainerStyle={[styles.content, { padding: PADDING }]}>
-      <Text style={[styles.intro, { color: theme.muted }]}>Choisissez un recueil</Text>
+      <Text style={[styles.intro, { color: theme.muted }]}>{t('collections.choose')}</Text>
       <View style={[styles.grid, { gap: GAP, maxWidth: 1100 }]}>
         {collections.map((c) => (
           <View key={c.id} style={{ width: coverWidth }}>
             <CollectionCover collection={c} width={coverWidth} onPress={open} />
             <Text style={[styles.count, { color: c.comingSoon ? theme.muted : theme.text }]}>
-              {c.comingSoon ? 'Bientôt disponible' : `${c.songs.length} chants`}
+              {c.comingSoon ? t('collections.soon') : plural('collections.songs', c.songs.length)}
             </Text>
           </View>
         ))}

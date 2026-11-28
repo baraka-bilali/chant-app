@@ -4,6 +4,7 @@ import { SvgXml } from 'react-native-svg';
 
 import { logoSvg } from '@/constants/logo';
 import type { Collection } from '@/data/collections';
+import { useI18n } from '@/i18n';
 
 type Props = {
   collection: Collection;
@@ -13,6 +14,7 @@ type Props = {
 
 /** Book-like cover: gradient, double frame, logo and title, drawn in code (no image file). */
 export const CollectionCover = memo(function CollectionCover({ collection, width, onPress }: Props) {
+  const { t, plural } = useI18n();
   const { from, to, frame } = collection.cover;
   const height = Math.round((width * 7) / 5);
   // The gradient id must be unique: on web every inline SVG shares the same document ids.
@@ -23,7 +25,7 @@ export const CollectionCover = memo(function CollectionCover({ collection, width
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${collection.title}, ${collection.comingSoon ? 'bientôt disponible' : `${count} chants`}`}
+      accessibilityLabel={`${collection.title}, ${collection.comingSoon ? t('collections.soon') : plural('collections.songs', count)}`}
       onPress={() => onPress(collection.id)}
       style={({ pressed }) => [styles.wrap, { width }, pressed && styles.pressed]}>
       <View style={[styles.cover, { width, height }]}>
@@ -38,7 +40,7 @@ export const CollectionCover = memo(function CollectionCover({ collection, width
         </Text>
         {collection.comingSoon ? (
           <View style={styles.ribbon}>
-            <Text style={styles.ribbonText}>BIENTÔT</Text>
+            <Text style={styles.ribbonText}>{t('collections.soonRibbon')}</Text>
           </View>
         ) : null}
       </View>

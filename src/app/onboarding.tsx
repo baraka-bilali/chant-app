@@ -21,15 +21,18 @@ import { Spacing } from '@/constants/theme';
 import { useApp } from '@/context/app-context';
 import { allSongs } from '@/data/collections';
 import { useTheme } from '@/hooks/use-theme';
+import { LANGUAGES, useI18n } from '@/i18n';
+import type { TranslationKey } from '@/i18n/dictionaries';
 
-const LANGUAGES = ['Français', 'English', 'Kiswahili', 'Lingala', 'Tshiluba', 'Kikongo'];
+/** Languages in which songs are available (shown as chips). */
+const SONG_LANGUAGES = ['Français', 'English', 'Kiswahili', 'Lingala', 'Tshiluba', 'Kikongo'];
 
-const TIPS: { icon: ComponentProps<typeof Ionicons>['name']; text: string }[] = [
-  { icon: 'search', text: 'Cherchez un chant par numéro, titre ou paroles.' },
-  { icon: 'text', text: 'A- / A+ : agrandissez le texte pour bien lire.' },
-  { icon: 'list', text: 'Créez des playlists pour vos cultes et veillées.' },
-  { icon: 'moon-outline', text: 'Passez en thème clair ou sombre en un geste.' },
-  { icon: 'information-circle-outline', text: '« À propos » : version de l’app et contact.' },
+const TIPS: { icon: ComponentProps<typeof Ionicons>['name']; key: TranslationKey }[] = [
+  { icon: 'search', key: 'onb.tip.search' },
+  { icon: 'text', key: 'onb.tip.font' },
+  { icon: 'list', key: 'onb.tip.playlists' },
+  { icon: 'bookmark-outline', key: 'onb.tip.favorites' },
+  { icon: 'ellipsis-vertical', key: 'onb.tip.menu' },
 ];
 
 type Slide = { key: string; kicker: string; title: string; body: string; art: ReactNode; extra?: ReactNode };
@@ -38,8 +41,9 @@ export default function OnboardingScreen() {
   const theme = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { t, language } = useI18n();
   const { width } = useWindowDimensions();
-  const { completeOnboarding } = useApp();
+  const { completeOnboarding, setLanguage } = useApp();
   const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
   const [index, setIndex] = useState(0);
 
@@ -63,28 +67,28 @@ export default function OnboardingScreen() {
   const slides: Slide[] = [
     {
       key: 'welcome',
-      kicker: 'Bienvenue',
-      title: 'Louons le Seigneur ensemble',
-      body: 'Le Recueil CMI est fait pour toute personne qui désire louer le Seigneur et apprendre les chants de notre communauté.',
+      kicker: t('onb.welcome.kicker'),
+      title: t('onb.welcome.title'),
+      body: t('onb.welcome.body'),
       art: (
         <View style={[styles.art, styles.badgeArt, { width: artWidth, height: artHeight, backgroundColor: '#1d4ed8' }]}>
           <Image
             source={require('@/assets/images/icon.png')}
             style={{ width: artHeight * 0.82, height: artHeight * 0.82, borderRadius: 32 }}
-            accessibilityLabel="Logo du Recueil CMI"
+            accessibilityLabel="Recueil CMI"
           />
         </View>
       ),
     },
     {
       key: 'languages',
-      kicker: `${allSongs.length} chants`,
-      title: 'Un recueil, plusieurs langues',
-      body: 'Chantez dans la langue de votre cœur : le recueil rassemble des cantiques de toutes nos assemblées.',
+      kicker: t('onb.languages.kicker', { n: allSongs.length }),
+      title: t('onb.languages.title'),
+      body: t('onb.languages.body'),
       art: badge('globe-outline'),
       extra: (
         <View style={styles.chips}>
-          {LANGUAGES.map((lang) => (
+          {SONG_LANGUAGES.map((lang) => (
             <View key={lang} style={[styles.chip, { backgroundColor: theme.chorusBackground }]}>
               <Text style={[styles.chipText, { color: theme.accent }]}>{lang}</Text>
             </View>
@@ -94,22 +98,22 @@ export default function OnboardingScreen() {
     },
     {
       key: 'offline',
-      kicker: 'Hors ligne',
-      title: 'Pas besoin d’internet',
-      body: 'Tous les chants sont déjà dans l’application. Lisez-les partout : à l’église, en voyage ou à la maison.',
+      kicker: t('onb.offline.kicker'),
+      title: t('onb.offline.title'),
+      body: t('onb.offline.body'),
       art: illustration(OFFLINE_SVG),
     },
     {
       key: 'family',
-      kicker: 'En famille',
-      title: 'Chantez en famille et en communauté',
-      body: 'Préparez vos cultes, vos veillées de prière et vos moments en famille grâce aux playlists.',
+      kicker: t('onb.family.kicker'),
+      title: t('onb.family.title'),
+      body: t('onb.family.body'),
       art: illustration(FAMILY_SVG),
     },
     {
       key: 'tips',
-      kicker: 'Astuces',
-      title: 'Quelques conseils',
+      kicker: t('onb.tips.kicker'),
+      title: t('onb.tips.title'),
       body: '',
       art: null,
       extra: (
@@ -119,7 +123,7 @@ export default function OnboardingScreen() {
               <View style={[styles.tipIcon, { backgroundColor: theme.chorusBackground }]}>
                 <Ionicons name={tip.icon} size={22} color={theme.accent} />
               </View>
-              <Text style={[styles.tipText, { color: theme.text }]}>{tip.text}</Text>
+              <Text style={[styles.tipText, { color: theme.text }]}>{t(tip.key)}</Text>
             </View>
           ))}
         </View>
@@ -127,14 +131,14 @@ export default function OnboardingScreen() {
     },
     {
       key: 'contact',
-      kicker: 'Contact',
-      title: 'Un souci ? Écrivez-nous',
-      body: 'Une faute dans un chant ou un problème dans l’application ? Dites-le-nous et nous corrigerons au plus vite. Vous nous retrouverez aussi dans « À propos ».',
+      kicker: t('onb.contact.kicker'),
+      title: t('onb.contact.title'),
+      body: t('onb.contact.body'),
       art: badge('chatbubbles-outline'),
       extra: (
         <View style={styles.contact}>
           <ContactButtons />
-          <Text style={[styles.blessing, { color: theme.accent }]}>Que le Seigneur vous bénisse !</Text>
+          <Text style={[styles.blessing, { color: theme.accent }]}>{t('onb.contact.blessing')}</Text>
         </View>
       ),
     },
@@ -159,9 +163,28 @@ export default function OnboardingScreen() {
   return (
     <View style={[styles.screen, { backgroundColor: theme.background, paddingTop: insets.top }]}>
       <View style={styles.topBar}>
+        <View style={styles.langs} accessibilityRole="radiogroup">
+          {LANGUAGES.map((l) => {
+            const selected = l.code === language;
+            return (
+              <Pressable
+                key={l.code}
+                accessibilityRole="radio"
+                accessibilityLabel={l.label}
+                accessibilityState={{ selected }}
+                onPress={() => setLanguage(l.code)}
+                style={[
+                  styles.lang,
+                  { borderColor: selected ? theme.accent : theme.border, backgroundColor: selected ? theme.chorusBackground : 'transparent' },
+                ]}>
+                <Text style={[styles.langText, { color: selected ? theme.accent : theme.muted }]}>{l.code.toUpperCase()}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
         {index < last ? (
           <Pressable accessibilityRole="button" onPress={finish} hitSlop={12} style={styles.skip}>
-            <Text style={[styles.skipText, { color: theme.muted }]}>Passer</Text>
+            <Text style={[styles.skipText, { color: theme.muted }]}>{t('onb.skip')}</Text>
           </Pressable>
         ) : null}
       </View>
@@ -190,7 +213,7 @@ export default function OnboardingScreen() {
             <Pressable
               key={slide.key}
               accessibilityRole="button"
-              accessibilityLabel={`Aller à l'écran ${i + 1}`}
+              accessibilityLabel={t('onb.goTo', { n: i + 1 })}
               onPress={() => goTo(i)}
               hitSlop={6}
               style={[
@@ -205,7 +228,7 @@ export default function OnboardingScreen() {
           onPress={() => (index < last ? goTo(index + 1) : finish())}
           style={({ pressed }) => [styles.primary, { backgroundColor: theme.accent }, pressed && { opacity: 0.8 }]}>
           <Text style={[styles.primaryText, { color: theme.onAccent }]}>
-            {index < last ? 'Suivant' : 'Commencer'}
+            {index < last ? t('onb.next') : t('onb.start')}
           </Text>
           <Ionicons name={index < last ? 'arrow-forward' : 'checkmark'} size={20} color={theme.onAccent} />
         </Pressable>
@@ -216,7 +239,16 @@ export default function OnboardingScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  topBar: { height: 48, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', paddingHorizontal: Spacing.three },
+  topBar: {
+    height: 52,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.three,
+  },
+  langs: { flexDirection: 'row', gap: 6 },
+  lang: { borderWidth: 1, borderRadius: 999, paddingVertical: 5, paddingHorizontal: 11 },
+  langText: { fontSize: 13, fontWeight: '800', letterSpacing: 0.5 },
   skip: { paddingVertical: Spacing.two, paddingHorizontal: Spacing.two },
   skipText: { fontSize: 16, fontWeight: '600' },
   slide: { alignItems: 'center', paddingHorizontal: Spacing.four, paddingBottom: Spacing.four, gap: Spacing.three },

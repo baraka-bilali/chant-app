@@ -15,11 +15,13 @@ import {
 import { Spacing } from '@/constants/theme';
 import { useApp } from '@/context/app-context';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 
 type Props = { visible: boolean; songId: string; onClose: () => void };
 
 export function PlaylistPicker({ visible, songId, onClose }: Props) {
   const theme = useTheme();
+  const { t, plural } = useI18n();
   const { playlists, createPlaylist, addSong, removeSong } = useApp();
   const [name, setName] = useState('');
 
@@ -33,18 +35,18 @@ export function PlaylistPicker({ visible, songId, onClose }: Props) {
   return (
     <Modal visible={visible} transparent animationType="slide" statusBarTranslucent onRequestClose={onClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
-        <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel="Fermer" />
+        <Pressable style={styles.backdrop} onPress={onClose} accessibilityLabel={t('common.close')} />
         <View style={[styles.sheet, { backgroundColor: theme.surface, borderColor: theme.border }]}>
           <View style={styles.header}>
-            <Text style={[styles.title, { color: theme.text }]}>Ajouter à une playlist</Text>
-            <Pressable onPress={onClose} hitSlop={8} accessibilityRole="button" accessibilityLabel="Fermer">
+            <Text style={[styles.title, { color: theme.text }]}>{t('picker.title')}</Text>
+            <Pressable onPress={onClose} hitSlop={8} accessibilityRole="button" accessibilityLabel={t('common.close')}>
               <Ionicons name="close" size={26} color={theme.text} />
             </Pressable>
           </View>
 
           <ScrollView style={styles.list} keyboardShouldPersistTaps="handled">
             {playlists.length === 0 && (
-              <Text style={[styles.empty, { color: theme.muted }]}>Aucune playlist. Crée-en une ci-dessous.</Text>
+              <Text style={[styles.empty, { color: theme.muted }]}>{t('picker.none')}</Text>
             )}
             {playlists.map((p) => {
               const included = p.songIds.includes(songId);
@@ -58,7 +60,7 @@ export function PlaylistPicker({ visible, songId, onClose }: Props) {
                   <View style={styles.flex}>
                     <Text style={[styles.rowTitle, { color: theme.text }]}>{p.name}</Text>
                     <Text style={[styles.rowSub, { color: theme.muted }]}>
-                      {p.songIds.length} chant{p.songIds.length > 1 ? 's' : ''}
+                      {plural('playlists.songs', p.songIds.length)}
                     </Text>
                   </View>
                   <Ionicons
@@ -75,7 +77,7 @@ export function PlaylistPicker({ visible, songId, onClose }: Props) {
             <TextInput
               value={name}
               onChangeText={setName}
-              placeholder="Nouvelle playlist"
+              placeholder={t('picker.new')}
               placeholderTextColor={theme.muted}
               onSubmitEditing={createAndAdd}
               returnKeyType="done"
@@ -86,7 +88,7 @@ export function PlaylistPicker({ visible, songId, onClose }: Props) {
               onPress={createAndAdd}
               disabled={!name.trim()}
               style={[styles.button, { backgroundColor: theme.accent, opacity: name.trim() ? 1 : 0.4 }]}>
-              <Text style={[styles.buttonText, { color: theme.onAccent }]}>Créer + ajouter</Text>
+              <Text style={[styles.buttonText, { color: theme.onAccent }]}>{t('picker.createAdd')}</Text>
             </Pressable>
           </View>
         </View>

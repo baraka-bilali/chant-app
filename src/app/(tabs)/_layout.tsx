@@ -3,9 +3,11 @@ import { Tabs } from 'expo-router';
 
 import { HeaderActions } from '@/components/header-actions';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 
 export default function TabLayout() {
   const theme = useTheme();
+  const { t } = useI18n();
 
   return (
     <Tabs
@@ -17,7 +19,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Recueils',
+          title: t('tabs.collections'),
           tabBarIcon: ({ focused, size }) => (
             <Ionicons name="library" size={size} color={focused ? theme.accent : theme.muted} />
           ),
@@ -26,7 +28,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="playlists"
         options={{
-          title: 'Playlists',
+          title: t('tabs.playlists'),
           tabBarIcon: ({ focused, size }) => (
             <Ionicons name="list" size={size} color={focused ? theme.accent : theme.muted} />
           ),

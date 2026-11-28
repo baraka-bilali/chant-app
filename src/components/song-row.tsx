@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Spacing } from '@/constants/theme';
 import type { Song } from '@/data/songs';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 
 type Props = {
   song: Song;
@@ -15,6 +16,7 @@ type Props = {
 
 export const SongRow = memo(function SongRow({ song, onPress, onRemove }: Props) {
   const theme = useTheme();
+  const { t } = useI18n();
 
   return (
     <View style={[styles.row, { borderBottomColor: theme.border }]}>
@@ -39,7 +41,7 @@ export const SongRow = memo(function SongRow({ song, onPress, onRemove }: Props)
       {onRemove && (
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Retirer ${song.name} de la playlist`}
+          accessibilityLabel={t('playlists.removeSong', { name: song.name })}
           hitSlop={8}
           onPress={() => onRemove(song.id)}
           style={styles.remove}>

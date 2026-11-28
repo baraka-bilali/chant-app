@@ -3,10 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Spacing } from '@/constants/theme';
 import { useApp } from '@/context/app-context';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 import { parseLyrics } from '@/lib/lyrics';
 
 export function LyricsView({ lyrics }: { lyrics: string }) {
   const theme = useTheme();
+  const { t } = useI18n();
   const { fontSize } = useApp();
   const blocks = parseLyrics(lyrics);
   const text = { fontSize, lineHeight: Math.round(fontSize * 1.55) };
@@ -19,7 +21,7 @@ export function LyricsView({ lyrics }: { lyrics: string }) {
             <View
               key={index}
               style={[styles.chorus, { backgroundColor: theme.chorusBackground, borderLeftColor: theme.accent }]}>
-              <Text style={[styles.chorusLabel, { color: theme.accent }]}>Refrain</Text>
+              <Text style={[styles.chorusLabel, { color: theme.accent }]}>{t('song.chorus')}</Text>
               <Text style={[text, styles.chorusText, { color: theme.text }]}>{block.text}</Text>
             </View>
           );

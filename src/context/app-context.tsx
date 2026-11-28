@@ -11,6 +11,8 @@ import {
 } from 'react';
 import { Appearance, useColorScheme } from 'react-native';
 
+import { detectLanguage, isLanguage, type Language } from '@/i18n/language';
+
 export type Playlist = { id: string; name: string; songIds: string[] };
 
 type AppContextValue = {
@@ -30,6 +32,13 @@ type AppContextValue = {
   onboardingDone: boolean;
   completeOnboarding: () => void;
   replayOnboarding: () => void;
+  /** Interface language (songs keep their own language). */
+  language: Language;
+  setLanguage: (language: Language) => void;
+  /** Favorite song ids, oldest first. */
+  favorites: string[];
+  isFavorite: (songId: string) => boolean;
+  toggleFavorite: (songId: string) => void;
 };
 
 export const FONT_MIN = 14;
@@ -41,6 +50,8 @@ const PLAYLISTS_KEY = 'chant_playlists_v2';
 const THEME_KEY = 'theme_pref';
 const FONT_KEY = 'font_size';
 const ONBOARDING_KEY = 'onboarding_done';
+const LANGUAGE_KEY = 'app_language';
+const FAVORITES_KEY = 'favorites_v1';
 
 const AppContext = createContext<AppContextValue | null>(null);
 
@@ -60,6 +71,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [fontSize, setFontSize] = useState(FONT_DEFAULT);
   const [onboardingDone, setOnboardingDone] = useState(false);
+  const [language, setLanguageState] = useState<Language>('fr');
+  const [favorites, setFavorites] = useState<string[]>([]);
   // Source of truth for synchronous reads inside actions; state mirrors it for rendering.
   const playlistsRef = useRef<Playlist[]>([]);
   const scheme = useColorScheme();
@@ -74,14 +87,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     (async () => {
       try {
-        const [storedPlaylists, storedTheme, storedFont, storedOnboarding] = await Promise.all([
-          AsyncStorage.getItem(PLAYLISTS_KEY),
-          AsyncStorage.getItem(THEME_KEY),
-          AsyncStorage.getItem(FONT_KEY),
-          AsyncStorage.getItem(ONBOARDING_KEY),
-        ]);
+        const [storedPlaylists, storedTheme, storedFont, storedOnboarding, storedLanguage, storedFavorites] =
+          await Promise.all([
+            AsyncStorage.getItem(PLAYLISTS_KEY),
+            AsyncStorage.getItem(THEME_KEY),
+            AsyncStorage.getItem(FONT_KEY),
+            AsyncStorage.getItem(ONBOARDING_KEY),
+            AsyncStorage.getItem(LANGUAGE_KEY),
+            AsyncStorage.getItem(FAVORITES_KEY),
+          ]);
         if (cancelled) return;
         setOnboardingDone(storedOnboarding === '1');
+        setLanguageState(isLanguage(storedLanguage) ? storedLanguage : detectLanguage());
+        if (storedFavorites) {
+          const parsed: unknown = JSON.parse(storedFavorites);
+          if (Array.isArray(parsed)) setFavorites(parsed.filter((s): s is string => typeof s === 'string'));
+        }
         if (storedPlaylists) update(() => sanitizePlaylists(JSON.parse(storedPlaylists)));
         if (storedTheme === 'light' || storedTheme === 'dark') Appearance.setColorScheme(storedTheme);
         const font = Number(storedFont);
@@ -155,6 +176,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const increaseFont = useCallback(() => changeFont(FONT_STEP), [changeFont]);
   const decreaseFont = useCallback(() => changeFont(-FONT_STEP), [changeFont]);
 
+  const setLanguage = useCallback((next: Language) => {
+    setLanguageState(next);
+    AsyncStorage.setItem(LANGUAGE_KEY, next).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
+    AsyncStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites)).catch(() => {});
+  }, [favorites, ready]);
+
+  const isFavorite = useCallback((songId: string) => favorites.includes(songId), [favorites]);
+  const toggleFavorite = useCallback((songId: string) => {
+    setFavorites((current) => (current.includes(songId) ? current.filter((s) => s !== songId) : [...current, songId]));
+  }, []);
+
   const completeOnboarding = useCallback(() => {
     setOnboardingDone(true);
     AsyncStorage.setItem(ONBOARDING_KEY, '1').catch(() => {});
@@ -179,6 +215,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       onboardingDone,
       completeOnboarding,
       replayOnboarding,
+      language,
+      setLanguage,
+      favorites,
+      isFavorite,
+      toggleFavorite,
     }),
     [
       ready,
@@ -194,6 +235,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       onboardingDone,
       completeOnboarding,
       replayOnboarding,
+      language,
+      setLanguage,
+      favorites,
+      isFavorite,
+      toggleFavorite,
     ],
   );
 

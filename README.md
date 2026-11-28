@@ -37,6 +37,13 @@ src/
 └─ lib/                 utilitaires (analyse des paroles, normalisation du texte)
 ```
 
+## Langues, favoris et menu
+- **Langues de l'interface** : français, anglais et lingala (menu ⋮ → Langue). Au premier lancement, l'app suit la langue du téléphone
+  (français par défaut). Les textes sont dans `src/i18n/dictionaries.ts`. Les paroles des chants gardent leur langue d'origine.
+  La traduction en lingala est une première version : à faire relire par un locuteur natif.
+- **Favoris** : le marque-page de la barre du haut ouvre la liste ; sur la page d'un chant, le marque-page ajoute ou retire le chant.
+- **Menu ⋮** : langue, thème clair/sombre, partager l'application, astuces et aide (revoir l'introduction), nous contacter, à propos.
+
 ## Recueils (collections)
 Après l'introduction, l'écran d'accueil affiche les recueils sous forme de couvertures :
 **Chants d'ensemble** (854 chants) et **Recueil Chorale Tome 1** (« Bientôt disponible »).

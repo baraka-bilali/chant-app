@@ -3,17 +3,19 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Spacing } from '@/constants/theme';
 import { FONT_MAX, FONT_MIN, useApp } from '@/context/app-context';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 
 /** "A-" / "A+" buttons to shrink or enlarge the lyrics text. */
 export function FontSizeControls() {
   const theme = useTheme();
+  const { t } = useI18n();
   const { fontSize, increaseFont, decreaseFont } = useApp();
 
   return (
     <View style={styles.row}>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Réduire la taille du texte"
+        accessibilityLabel={t('font.decrease')}
         disabled={fontSize <= FONT_MIN}
         onPress={decreaseFont}
         style={[styles.button, { borderColor: theme.border, backgroundColor: theme.surface }, fontSize <= FONT_MIN && styles.disabled]}>
@@ -21,7 +23,7 @@ export function FontSizeControls() {
       </Pressable>
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel="Agrandir la taille du texte"
+        accessibilityLabel={t('font.increase')}
         disabled={fontSize >= FONT_MAX}
         onPress={increaseFont}
         style={[styles.button, { borderColor: theme.border, backgroundColor: theme.surface }, fontSize >= FONT_MAX && styles.disabled]}>

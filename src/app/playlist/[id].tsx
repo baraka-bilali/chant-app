@@ -9,12 +9,14 @@ import { songsById } from '@/data/collections';
 import type { Song } from '@/data/songs';
 import { useApp } from '@/context/app-context';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 import { confirmAction } from '@/lib/confirm';
 
 export default function PlaylistScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
   const router = useRouter();
+  const { t } = useI18n();
   const { playlists, removeSong, deletePlaylist } = useApp();
   const playlist = playlists.find((p) => p.id === id);
 
@@ -27,7 +29,7 @@ export default function PlaylistScreen() {
   if (!playlist) {
     return (
       <View style={styles.center}>
-        <Text style={{ color: theme.muted }}>Playlist introuvable.</Text>
+        <Text style={{ color: theme.muted }}>{t('playlists.notFound')}</Text>
       </View>
     );
   }
@@ -45,13 +47,19 @@ export default function PlaylistScreen() {
           headerRight: () => (
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Supprimer la playlist"
+              accessibilityLabel={t('playlists.deleteTitle')}
               hitSlop={8}
               onPress={() =>
-                confirmAction('Supprimer la playlist', `Supprimer « ${playlist.name} » ?`, 'Supprimer', () => {
-                  router.back();
-                  deletePlaylist(playlist.id);
-                })
+                confirmAction(
+                  t('playlists.deleteTitle'),
+                  t('playlists.deleteText', { name: playlist.name }),
+                  t('common.delete'),
+                  t('common.cancel'),
+                  () => {
+                    router.back();
+                    deletePlaylist(playlist.id);
+                  },
+                )
               }>
               <Ionicons name="trash-outline" size={22} color={theme.danger} />
             </Pressable>
@@ -64,7 +72,7 @@ export default function PlaylistScreen() {
         renderItem={({ item }) => <SongRow song={item} onPress={openSong} onRemove={onRemove} />}
         ListEmptyComponent={
           <Text style={[styles.empty, { color: theme.muted }]}>
-            Cette playlist est vide. Ouvre un chant et utilise « Ajouter à une playlist ».
+            {t('playlists.empty')}
           </Text>
         }
       />

@@ -8,6 +8,7 @@ import { Spacing } from '@/constants/theme';
 import { useApp } from '@/context/app-context';
 import { allSongs } from '@/data/collections';
 import { useTheme } from '@/hooks/use-theme';
+import { useI18n } from '@/i18n';
 
 const APP_VERSION = Constants.expoConfig?.version ?? '—';
 
@@ -15,23 +16,24 @@ export default function InfoScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { replayOnboarding } = useApp();
+  const { t } = useI18n();
 
   return (
     <ScrollView contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + Spacing.five }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.text }]}>Recueil CMI</Text>
-        <Text style={[styles.subtitle, { color: theme.muted }]}>Centre Missionnaire de Pascal</Text>
+        <Text style={[styles.subtitle, { color: theme.muted }]}>{t('info.subtitle')}</Text>
       </View>
 
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Row label="Version" value={APP_VERSION} />
-        <Row label="Chants" value={String(allSongs.length)} last />
+        <Row label={t('info.version')} value={APP_VERSION} />
+        <Row label={t('info.songs')} value={String(allSongs.length)} last />
       </View>
 
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Nous contacter</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('info.contactTitle')}</Text>
         <Text style={[styles.body, { color: theme.muted }]}>
-          Une faute dans un chant ou un problème dans l’application ? Écrivez-nous, nous corrigerons au plus vite.
+          {t('info.contactText')}
         </Text>
         <View style={styles.contact}>
           <ContactButtons />
@@ -48,13 +50,13 @@ export default function InfoScreen() {
           pressed && { opacity: 0.7 },
         ]}>
         <Ionicons name="play-circle-outline" size={22} color={theme.accent} />
-        <Text style={[styles.replayText, { color: theme.text }]}>Revoir l’introduction</Text>
+        <Text style={[styles.replayText, { color: theme.text }]}>{t('info.replay')}</Text>
       </Pressable>
 
       <View style={[styles.card, { backgroundColor: theme.surface, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Copyright</Text>
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>{t('info.copyright')}</Text>
         <Text style={[styles.body, { color: theme.muted }]}>
-          © {new Date().getFullYear()} Centre Missionnaire de Pascal. Tous droits réservés.
+          {t('info.copyrightText', { year: new Date().getFullYear() })}
         </Text>
       </View>
     </ScrollView>
