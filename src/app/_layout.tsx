@@ -46,6 +46,7 @@ function Navigator() {
         <Stack.Protected guard={onboardingDone} redirectTo="/onboarding">
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="collection/[id]" options={{ title: '', headerBackTitle: t('common.back') }} />
+          <Stack.Screen name="numbers/[id]" options={{ title: t('numbers.title'), headerBackTitle: t('common.back') }} />
           <Stack.Screen name="song/[id]" options={{ title: '', headerBackTitle: t('common.back') }} />
           <Stack.Screen name="playlist/[id]" options={{ title: t('playlists.title'), headerBackTitle: t('common.back') }} />
           <Stack.Screen name="favorites" options={{ title: t('favorites.title'), headerBackTitle: t('common.back') }} />

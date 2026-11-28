@@ -1,6 +1,6 @@
 // Usage: node scripts/convert-videopsalm.js "C:/Users/Public/Documents/VideoPsalm/SongBooks/A-S.json" src/data/A-S.json
 // Add a third argument "full" to print the complete audit report.
-// Convert a VideoPsalm songbook into the app's { Songs: [{ Number, Title, Lyrics, Guid }] } format.
+// Convert a VideoPsalm songbook into the app's { Songs: [{ Number, Name, Lyrics, Guid }] } format.
 // Rule: each distinct chorus is kept ONCE, at its first occurrence (normally right after verse 1).
 const fs = require('fs')
 const parseVP = require('./parse.js')
@@ -152,17 +152,13 @@ for (const s of book.Songs) {
   if (seenIds.has(s.ID)) report.dupIds.push(`${s.ID}: ${name} / ${seenIds.get(s.ID)}`)
   seenIds.set(s.ID, name)
 
-  songs.push({ Number: s.ID, Title: `${s.ID}. ${title}`, Lyrics: lyrics, Guid: s.Guid })
+  // Display name = VideoPsalm's song name (normal case). Fully upper-case names become "Sentence case".
+  const sentenceCase = (v) => (v === v.toUpperCase() && /[A-ZÀ-Ý]/.test(v) ? v.charAt(0) + v.slice(1).toLowerCase() : v)
+  const displayName = sentenceCase(name.replace(/\s+/g, ' ') || title)
+  songs.push({ Number: s.ID, Name: displayName, Lyrics: lyrics, Guid: s.Guid })
 }
 
 songs.sort((a, b) => a.Number - b.Number)
-// playlists are keyed by Title in the app: make sure every title is unique
-const titleCount = new Map()
-for (const s of songs) {
-  const n = (titleCount.get(s.Title) ?? 0) + 1
-  titleCount.set(s.Title, n)
-  if (n > 1) { report.dupTitles = (report.dupTitles ?? []).concat(s.Title); s.Title = `${s.Title} (${n})` }
-}
 fs.writeFileSync(output, JSON.stringify({ Songs: songs }, null, 2) + '\n', 'utf8')
 
 console.log('songs written:', songs.length, '/', report.total)

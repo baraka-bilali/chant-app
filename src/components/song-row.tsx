@@ -14,6 +14,7 @@ type Props = {
   onRemove?: (songId: string) => void;
 };
 
+/** One line per song: its number and its name (one single title, normal case). */
 export const SongRow = memo(function SongRow({ song, onPress, onRemove }: Props) {
   const theme = useTheme();
   const { t } = useI18n();
@@ -24,19 +25,14 @@ export const SongRow = memo(function SongRow({ song, onPress, onRemove }: Props)
         accessibilityRole="button"
         onPress={() => onPress(song.id)}
         style={({ pressed }) => [styles.main, pressed && styles.pressed]}>
-        <View style={[styles.badge, { backgroundColor: theme.chorusBackground }]}>
-          <Text style={[styles.badgeText, { color: theme.accent }]} numberOfLines={1} adjustsFontSizeToFit>
+        <View style={styles.number}>
+          <Text style={[styles.numberText, { color: theme.accent }]} numberOfLines={1} adjustsFontSizeToFit>
             {song.number}
           </Text>
         </View>
-        <View style={styles.texts}>
-          <Text style={[styles.title, { color: theme.text }]} numberOfLines={1}>
-            {song.name}
-          </Text>
-          <Text style={[styles.preview, { color: theme.muted }]} numberOfLines={1}>
-            {song.preview}
-          </Text>
-        </View>
+        <Text style={[styles.title, { color: theme.text }]} numberOfLines={2}>
+          {song.name}
+        </Text>
       </Pressable>
       {onRemove && (
         <Pressable
@@ -63,21 +59,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.three,
-    paddingVertical: Spacing.two + 4,
+    minHeight: 60,
+    paddingVertical: Spacing.two + 2,
     paddingHorizontal: Spacing.three,
   },
   pressed: { opacity: 0.6 },
-  badge: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 4,
-  },
-  badgeText: { fontSize: 15, fontWeight: '700' },
-  texts: { flex: 1, gap: 2 },
-  title: { fontSize: 16, fontWeight: '600' },
-  preview: { fontSize: 13 },
+  number: { width: 44, alignItems: 'flex-start' },
+  numberText: { fontSize: 17, fontWeight: '800' },
+  title: { flex: 1, fontSize: 17, lineHeight: 23, fontWeight: '500' },
   remove: { paddingRight: Spacing.three },
 });

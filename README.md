@@ -3,7 +3,8 @@
 Application mobile (Android + iOS, et web) du recueil de chants de la communauté, construite avec
 **Expo SDK 58**, **React Native 0.88**, **React 19** et **Expo Router**.
 
-- Liste des 854 chants avec recherche (titre, numéro ou paroles, sans tenir compte des accents)
+- Liste des 854 chants (numéro + un seul titre, en casse normale) avec recherche « titre puis paroles » comme VideoPsalm : chaque mot tapé doit commencer un mot du titre ; les paroles ne sont proposées qu'en complément (ou si aucun titre ne correspond). Accents ignorés.
+- Bouton **123** à côté du champ de recherche : grille de tous les numéros (001, 002…) pour ouvrir un chant directement
 - Affichage des paroles : couplets numérotés, refrain mis en valeur (une seule fois, après le couplet 1)
 - Playlists locales (stockées sur l'appareil avec AsyncStorage)
 - Thème clair / sombre
@@ -26,14 +27,14 @@ Autres commandes : `npm run android`, `npm run ios`, `npm run web`, `npm run lin
 ```
 src/
 ├─ app/                 écrans (Expo Router : chaque fichier est une route)
-│  ├─ (tabs)/index.tsx      liste + recherche
+│  ├─ (tabs)/index.tsx      liste + recherche (voir lib/search.ts) · numbers/[id].tsx grille des numéros
 │  ├─ (tabs)/playlists.tsx  playlists
 │  ├─ song/[id].tsx         paroles d'un chant
 │  └─ playlist/[id].tsx     contenu d'une playlist
 ├─ components/          composants (ligne de chant, paroles, sélecteur de playlist…)
 ├─ context/             état global (playlists, thème) + stockage
 ├─ data/A-S.json        le recueil (généré, voir ci-dessous)
-├─ data/songs.ts        chargement et recherche des chants
+├─ data/songs.ts        chargement des chants (src/lib/search.ts : recherche titre puis paroles)
 └─ lib/                 utilitaires (analyse des paroles, normalisation du texte)
 ```
 
