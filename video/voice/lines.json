@@ -1,0 +1,16 @@
+[
+  {"id": "01-intro", "scene": "intro", "at": 0.8, "text": "Bienvenue dans le Recueil C M I. <break time=\"250ms\"/> Chantez, louez, partagez !"},
+  {"id": "02-langues", "scene": "languages", "at": 0.3, "text": "Plus de huit cent cinquante chants, en français, anglais, swahili, lingala, tshiluba et kikongo."},
+  {"id": "03-recherche", "scene": "demo", "at": 0.3, "text": "Trouvez un chant en un instant, par numéro, titre ou paroles."},
+  {"id": "04-paroles", "scene": "demo", "at": 5, "text": "Les paroles sont claires, et le refrain est mis en valeur."},
+  {"id": "05-taille", "scene": "demo", "at": 9.2, "text": "Agrandissez le texte selon vos yeux."},
+  {"id": "06-playlists", "scene": "demo", "at": 12.5, "text": "Et préparez vos playlists pour le culte."},
+  {"id": "07-horsligne", "scene": "offline", "at": 0.3, "text": "Pas besoin d'internet : tous les chants sont déjà dans l'application."},
+  {"id": "08-ios-1", "scene": "iphone", "at": 0.3, "text": "Sur iPhone, ouvrez Safari, et allez sur chant, tiret, app, point vercel, point app."},
+  {"id": "09-ios-2", "scene": "iphone", "at": 7.6, "text": "Touchez le bouton Partager."},
+  {"id": "10-ios-3", "scene": "iphone", "at": 10.4, "text": "Faites défiler, puis choisissez : Sur l'écran d'accueil."},
+  {"id": "11-ios-4", "scene": "iphone", "at": 15, "text": "Touchez Ajouter. <break time=\"200ms\"/> L'application est sur votre écran d'accueil !"},
+  {"id": "12-android", "scene": "android", "at": 0.3, "text": "Sur Android, téléchargez l'application, ou installez la version web depuis Chrome."},
+  {"id": "13-contact", "scene": "contact", "at": 0.3, "text": "Un souci majeur ? Appelez-nous au : plus 243, <break time=\"120ms\"/> 980, <break time=\"120ms\"/> 139, <break time=\"120ms\"/> 630. <break time=\"250ms\"/> Ou écrivez-nous sur WhatsApp."},
+  {"id": "14-outro", "scene": "outro", "at": 0.6, "text": "Recueil C M I. <break time=\"300ms\"/> Que le Seigneur vous bénisse !"}
+]

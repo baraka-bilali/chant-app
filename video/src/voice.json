@@ -1,0 +1,86 @@
+[
+  {
+    "id": "01-intro",
+    "scene": "intro",
+    "from": 24,
+    "frames": 144
+  },
+  {
+    "id": "02-langues",
+    "scene": "languages",
+    "from": 9,
+    "frames": 200
+  },
+  {
+    "id": "03-recherche",
+    "scene": "demo",
+    "from": 9,
+    "frames": 129
+  },
+  {
+    "id": "04-paroles",
+    "scene": "demo",
+    "from": 150,
+    "frames": 111
+  },
+  {
+    "id": "05-taille",
+    "scene": "demo",
+    "from": 276,
+    "frames": 86
+  },
+  {
+    "id": "06-playlists",
+    "scene": "demo",
+    "from": 375,
+    "frames": 90
+  },
+  {
+    "id": "07-horsligne",
+    "scene": "offline",
+    "from": 9,
+    "frames": 129
+  },
+  {
+    "id": "08-ios-1",
+    "scene": "iphone",
+    "from": 9,
+    "frames": 202
+  },
+  {
+    "id": "09-ios-2",
+    "scene": "iphone",
+    "from": 228,
+    "frames": 68
+  },
+  {
+    "id": "10-ios-3",
+    "scene": "iphone",
+    "from": 312,
+    "frames": 124
+  },
+  {
+    "id": "11-ios-4",
+    "scene": "iphone",
+    "from": 450,
+    "frames": 150
+  },
+  {
+    "id": "12-android",
+    "scene": "android",
+    "from": 9,
+    "frames": 172
+  },
+  {
+    "id": "13-contact",
+    "scene": "contact",
+    "from": 9,
+    "frames": 323
+  },
+  {
+    "id": "14-outro",
+    "scene": "outro",
+    "from": 18,
+    "frames": 109
+  }
+]

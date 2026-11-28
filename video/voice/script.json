@@ -1,0 +1,16 @@
+[
+  { "id": "01-intro", "start": 0.8, "text": "Bienvenue dans le Recueil C.M.I. Chantez, louez, partagez !" },
+  { "id": "02-langues", "start": 6.3, "text": "Plus de huit cent cinquante chants, en français, en anglais, en swahili, en lingala, en tshiluba et en kikongo." },
+  { "id": "03-recherche", "start": 13.8, "text": "Trouvez un chant en un instant, par numéro, par titre ou grâce aux paroles." },
+  { "id": "04-paroles", "start": 18.5, "text": "Les paroles sont claires, et le refrain est mis en valeur." },
+  { "id": "05-taille", "start": 22.7, "text": "Agrandissez le texte selon vos yeux." },
+  { "id": "06-playlists", "start": 26.0, "text": "Et préparez vos playlists pour le culte." },
+  { "id": "07-horsligne", "start": 30.3, "text": "Pas besoin d'internet : tous les chants sont déjà dans l'application." },
+  { "id": "08-ios-1", "start": 35.5, "text": "Sur iPhone, ouvrez Safari, et allez sur chant-app point vercel point app." },
+  { "id": "09-ios-2", "start": 42.8, "text": "Touchez le bouton Partager." },
+  { "id": "10-ios-3", "start": 45.6, "text": "Faites défiler, puis choisissez « Sur l'écran d'accueil »." },
+  { "id": "11-ios-4", "start": 50.2, "text": "Touchez Ajouter… et voilà : l'application est sur votre écran d'accueil !" },
+  { "id": "12-android", "start": 56.0, "text": "Sur Android, téléchargez l'application, ou installez la version web depuis Chrome." },
+  { "id": "13-contact", "start": 62.6, "text": "Un souci majeur ? Appelez-nous au plus 243, 980, 139, 630. Ou écrivez-nous sur WhatsApp." },
+  { "id": "14-outro", "start": 74.6, "text": "Recueil C.M.I. Que le Seigneur vous bénisse !" }
+]
