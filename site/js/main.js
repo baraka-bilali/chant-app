@@ -8,7 +8,7 @@
     pwaUrl: 'https://chant-app.vercel.app',
     // APK file served by this site (see site/downloads/).
     apkPath: '/downloads/recueil-cmi.apk',
-    version: '2.0.0',
+    version: '2.0.1',
     apkSize: '25 Mo',
     whatsapp: '243980139630',
     email: 'techcmk11@gmail.com',
