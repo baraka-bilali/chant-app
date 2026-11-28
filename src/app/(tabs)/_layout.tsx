@@ -15,6 +15,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: theme.accent,
         tabBarInactiveTintColor: theme.muted,
         headerRight: () => <HeaderActions />,
+        sceneStyle: { backgroundColor: theme.background },
       }}>
       <Tabs.Screen
         name="index"

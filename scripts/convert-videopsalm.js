@@ -20,6 +20,8 @@ const LABEL = '(?:chr|ch|chorus|chœurs?|choeurs?|r[ée]f(?:r?ain)?s?)'
 const LABEL_LINE = new RegExp('^\\s*' + LABEL + '\\s*(?:\\d+\\s*)?[:.]\\s*(.*)$', 'i') // "Chr : text"
 const LABEL_ONLY = new RegExp('^\\s*' + LABEL + '\\s*(?:\\d+\\s*)?[:.]?\\s*$', 'i') // "Chœur" alone on a line
 const NUM_LINE = /^\s*(\d{1,2})\s*[.)\-]?\s*(\S.*)?$/ // "1. text" or "4"
+// Songs whose second half of each verse (bold/italic slide) is NOT a chorus, confirmed by hand.
+const NO_CHORUS_IDS = new Set([21])
 const FIN_RE = /^\s*\(\s*fin\s*\)\s*$/i
 
 const norm = (s) =>
@@ -112,6 +114,7 @@ for (const s of book.Songs) {
   const extraOf = (b) => b.pieces.slice(1).join('\n')
   const promote = new Set()
   verseBlocks.forEach((b) => {
+    if (NO_CHORUS_IDS.has(s.ID)) return
     if (verseBlocks.filter((o) => o !== b && norm(extraOf(o)) && dice(norm(extraOf(o)), norm(extraOf(b))) >= 0.9).length >= 1) promote.add(b)
   })
   const flat = []

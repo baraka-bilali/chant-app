@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
@@ -18,7 +18,7 @@ export default function SongScreen() {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   const { t } = useI18n();
-  const { isFavorite, toggleFavorite } = useApp();
+  const { isFavorite, toggleFavorite, playlists } = useApp();
   const [pickerOpen, setPickerOpen] = useState(false);
   const song = songsById.get(id);
 
@@ -31,6 +31,7 @@ export default function SongScreen() {
   }
 
   const favorite = isFavorite(song.id);
+  const inPlaylist = playlists.some((p) => p.songIds.includes(song.id));
 
   return (
     <>
@@ -38,15 +39,30 @@ export default function SongScreen() {
         options={{
           title: String(song.number),
           headerRight: () => (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={favorite ? t('song.favoriteRemove') : t('song.favoriteAdd')}
-              accessibilityState={{ selected: favorite }}
-              hitSlop={10}
-              onPress={() => toggleFavorite(song.id)}
-              style={{ paddingHorizontal: 12, paddingVertical: 4 }}>
-              <Ionicons name={favorite ? 'bookmark' : 'bookmark-outline'} size={24} color={favorite ? theme.accent : theme.text} />
-            </Pressable>
+            <View style={styles.headerActions}>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={t('song.addToPlaylist')}
+                accessibilityState={{ selected: inPlaylist }}
+                hitSlop={10}
+                onPress={() => setPickerOpen(true)}
+                style={styles.headerButton}>
+                <MaterialCommunityIcons
+                  name={inPlaylist ? 'playlist-check' : 'playlist-plus'}
+                  size={28}
+                  color={inPlaylist ? theme.accent : theme.text}
+                />
+              </Pressable>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={favorite ? t('song.favoriteRemove') : t('song.favoriteAdd')}
+                accessibilityState={{ selected: favorite }}
+                hitSlop={10}
+                onPress={() => toggleFavorite(song.id)}
+                style={styles.headerButton}>
+                <Ionicons name={favorite ? 'bookmark' : 'bookmark-outline'} size={24} color={favorite ? theme.accent : theme.text} />
+              </Pressable>
+            </View>
           ),
         }}
       />
@@ -54,13 +70,6 @@ export default function SongScreen() {
         <Text style={[styles.title, { color: theme.text }]}>{song.name}</Text>
 
         <View style={styles.actions}>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => setPickerOpen(true)}
-            style={[styles.button, { backgroundColor: theme.accent }]}>
-            <Ionicons name="add-circle-outline" size={20} color={theme.onAccent} />
-            <Text style={[styles.buttonText, { color: theme.onAccent }]}>{t('song.addToPlaylist')}</Text>
-          </Pressable>
           <FontSizeControls />
         </View>
 
@@ -79,16 +88,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     gap: Spacing.two,
   },
-  button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-    borderRadius: 999,
-    paddingVertical: Spacing.two + 2,
-    paddingHorizontal: Spacing.three,
-  },
-  buttonText: { fontWeight: '700' },
+  headerActions: { flexDirection: 'row', alignItems: 'center' },
+  headerButton: { paddingHorizontal: 8, paddingVertical: 4 },
 });

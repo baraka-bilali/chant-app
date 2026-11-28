@@ -1,8 +1,9 @@
 import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import * as SystemUI from 'expo-system-ui';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { Platform, useColorScheme } from 'react-native';
 
 import { AppProvider, useApp } from '@/context/app-context';
 import { useTheme } from '@/hooks/use-theme';
@@ -19,6 +20,16 @@ function Navigator() {
   useEffect(() => {
     if (ready) SplashScreen.hideAsync();
   }, [ready]);
+
+  // Paint the native window / page behind the screens with the app theme, so no white shows
+  // through while screens slide in or out (the cause of the white flashes in dark mode).
+  useEffect(() => {
+    SystemUI.setBackgroundColorAsync(theme.background).catch(() => {});
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      document.documentElement.style.backgroundColor = theme.background;
+      document.body.style.backgroundColor = theme.background;
+    }
+  }, [theme.background]);
 
   if (!ready) return null;
 
@@ -38,7 +49,7 @@ function Navigator() {
   return (
     <ThemeProvider value={navigationTheme}>
       <StatusBar style={isLight ? 'dark' : 'light'} />
-      <Stack>
+      <Stack screenOptions={{ contentStyle: { backgroundColor: theme.background } }}>
         {/* First launch: only the welcome screens are reachable until they are completed or skipped. */}
         <Stack.Protected guard={!onboardingDone} redirectTo="/">
           <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
